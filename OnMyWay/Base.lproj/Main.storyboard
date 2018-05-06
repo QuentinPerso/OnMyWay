@@ -1,24 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" systemVersion="17A277" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="eLo-iP-kfm">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
-        <scene sceneID="tne-QT-ifu">
+        <!--LoginVC-->
+        <scene sceneID="Rvb-4u-k9v">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                <viewController id="eLo-iP-kfm" customClass="LoginVC" customModule="OnMyWay" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="z2V-Dj-j1A"/>
+                        <viewControllerLayoutGuide type="bottom" id="TF1-Ky-TJx"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Gf6-la-f1c">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="On My Way !" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="12" translatesAutoresizingMaskIntoConstraints="NO" id="XdW-9n-m6K">
+                                <rect key="frame" x="0.0" y="106" width="375" height="67.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="351" id="eck-Uh-kDq"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Noteworthy-Bold" family="Noteworthy" pointSize="42"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="eck-Uh-kDq"/>
+                                    </mask>
+                                </variation>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qu4-ZT-Hzm">
+                                <rect key="frame" x="78" y="569" width="219" height="50"/>
+                                <color key="backgroundColor" red="0.9882352941176471" green="0.070588235294117646" blue="0.40784313725490196" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="fmu-dU-24s"/>
+                                    <constraint firstAttribute="width" constant="219" id="q9t-lZ-EzK"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="AvenirNext-Bold" family="Avenir Next" pointSize="17"/>
+                                <state key="normal" title="Login ">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="25"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="loginDidTouch:" destination="eLo-iP-kfm" eventType="touchUpInside" id="F0Q-Y4-vBR"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter your name" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="jS3-qv-JT4">
+                                <rect key="frame" x="78" y="503" width="219" height="50"/>
+                                <color key="tintColor" red="0.98823529409999999" green="0.070588235289999995" blue="0.40784313729999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" name="AvenirNext-DemiBold" family="Avenir Next" pointSize="17"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="no" spellCheckingType="no"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="25"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" red="0.0" green="0.7843137255" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="jS3-qv-JT4" firstAttribute="height" secondItem="Qu4-ZT-Hzm" secondAttribute="height" id="YIF-ie-r5m"/>
+                            <constraint firstItem="jS3-qv-JT4" firstAttribute="centerX" secondItem="Qu4-ZT-Hzm" secondAttribute="centerX" id="fST-LN-xae"/>
+                            <constraint firstItem="XdW-9n-m6K" firstAttribute="centerX" secondItem="Gf6-la-f1c" secondAttribute="centerX" id="gzW-RB-q7W"/>
+                            <constraint firstItem="XdW-9n-m6K" firstAttribute="width" secondItem="Gf6-la-f1c" secondAttribute="width" id="mnT-AU-OVV"/>
+                            <constraint firstItem="XdW-9n-m6K" firstAttribute="top" secondItem="z2V-Dj-j1A" secondAttribute="bottom" constant="86" id="mu9-wp-XcS"/>
+                            <constraint firstItem="Qu4-ZT-Hzm" firstAttribute="centerX" secondItem="XdW-9n-m6K" secondAttribute="centerX" id="n32-HC-79W"/>
+                            <constraint firstItem="TF1-Ky-TJx" firstAttribute="top" secondItem="Qu4-ZT-Hzm" secondAttribute="bottom" constant="48" id="p2G-aS-045"/>
+                            <constraint firstItem="Qu4-ZT-Hzm" firstAttribute="top" secondItem="jS3-qv-JT4" secondAttribute="bottom" constant="16" id="qfV-Jt-LNQ"/>
+                            <constraint firstItem="jS3-qv-JT4" firstAttribute="width" secondItem="Qu4-ZT-Hzm" secondAttribute="width" id="xQ2-xP-UzZ"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="NbL-Ub-4nC"/>
                     </view>
+                    <connections>
+                        <outlet property="bottomLayoutGuideConstraint" destination="p2G-aS-045" id="Jx9-pI-PtM"/>
+                        <outlet property="nameField" destination="jS3-qv-JT4" id="M92-RB-LL9"/>
+                    </connections>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="u1v-fG-c2G" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="-505" y="12"/>
         </scene>
     </scenes>
 </document>
