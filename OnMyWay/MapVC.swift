@@ -13,6 +13,7 @@ import Firebase
 class MapVC: UIViewController {
 
     private static let defaultRadiusUnselected:Double = 1000
+    private let targetInSightDistance = 10.0
     
     private var userAddRefHandle: DatabaseHandle?
     private var userChangeRefHandle: DatabaseHandle?
@@ -20,6 +21,7 @@ class MapVC: UIViewController {
     
     private var mapView: InteractivMap!
     private var locationButton: UIButton!
+    private var friendOnWayIndicator:UIImageView!
     private var drawerView:DrawerView!
     private var toggleButton:UIButton!
     private var emojiCollection:EmojiCollection!
@@ -27,18 +29,37 @@ class MapVC: UIViewController {
     
     private var users = [OMWUser]()
     
-    // MARK: Object Lifecycle
+    
+    
+    // MARK: Object Lifecycle and App notifications
     
     deinit {
         if let refHandle = userAddRefHandle { userRef.removeObserver(withHandle: refHandle) }
         if let refHandle = userChangeRefHandle { userRef.removeObserver(withHandle: refHandle) }
+        NotificationCenter.default.removeObserver(self, name: .UIApplicationWillEnterForeground, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .UIApplicationWillTerminate, object: nil)
         
     }
+    
+    @objc func willEnterForeground(){
+        for annot in mapView.annotations {
+            if let view = mapView.view(for: annot) as? PersonAnnotationView {
+                mapView.annotationViewBounceAnimation(view, scaleFactor: 0.9)
+            }
+        }
+    }
+    
+    @objc func willTerminate(){
+        setOnMyWay(onMyWay: false)
+    }
+
     
     // MARK: ViewController Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: .UIApplicationWillEnterForeground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(willTerminate), name: .UIApplicationWillTerminate, object: nil)
 
     }
     
@@ -90,6 +111,7 @@ extension MapVC {
         
         self.view.addSubview(mapView)
         self.view.addSubview(locationButton)
+        self.view.addSubview(friendOnWayIndicator)
         self.view.addSubview(drawerView)
         self.view.addSubview(goView)
         
@@ -114,10 +136,69 @@ extension MapVC {
         locationButton.setImage(#imageLiteral(resourceName: "locationButton"), for: .normal)
         locationButton.addTarget(self, action: #selector(self.locationButtonClicked), for: .touchUpInside)
         
+        friendOnWayIndicator = UIImageView(image: #imageLiteral(resourceName: "Omw"))
+        var indicatorCenter = locationButton.frame.origin
+        indicatorCenter.x += locButtonFrame.size.width/4
+        indicatorCenter.y += locButtonFrame.size.height/4
+        friendOnWayIndicator.center = indicatorCenter
+        friendOnWayIndicator.isHidden = true
+        
     }
     
     @objc private func locationButtonClicked() {
-        mapView.showAnnotations(mapView.annotations, animated: true)
+        
+        var annotShow = [PersonAnnotation]()
+        for annot in mapView.annotations {
+            if let pAnnot = annot as? PersonAnnotation, pAnnot.user.transportType != nil {
+                annotShow.append(pAnnot)
+            }
+        }
+        
+        if annotShow.count != 0 {
+            mapView.showAnnotations(annotShow, animated: true)
+        }
+        else {
+            mapView.showAnnotations(mapView.annotations, animated: true)
+        }
+        
+    }
+    
+    private func showFriendOnWayIndicator() {
+        
+        var isFriendsOnWay = false
+        for friend in users {
+            if friend.transportType != nil {
+                isFriendsOnWay = true
+                break
+            }
+        }
+
+        guard let indicator = friendOnWayIndicator else { return }
+        
+        if indicator.isHidden == !isFriendsOnWay {
+            return
+        }
+        
+        indicator.isHidden = !isFriendsOnWay
+        
+        if isFriendsOnWay {
+            UIView.animateKeyframes(withDuration: 0.4, delay: 0, options: [.repeat], animations: {
+                UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 0.5, animations: {
+                    indicator.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+                })
+                UIView.addKeyframe(withRelativeStartTime:0.5, relativeDuration: 0.5, animations: {
+                    indicator.transform = CGAffineTransform(scaleX: 1, y: 1)
+                })
+                
+            }, completion: nil)
+        }
+        else {
+            indicator.transform = CGAffineTransform(scaleX: 1, y: 1)
+        }
+        
+        
+        
+        
     }
     
     //************************************
@@ -127,7 +208,7 @@ extension MapVC {
     private func setupMap() {
         
         mapView = InteractivMap(frame: self.view.frame)
-        mapView.tintColor = #colorLiteral(red: 0, green: 0.7843137255, blue: 1, alpha: 1)
+        mapView.tintColor = UIColor.omwBlue
         
         mapView.didSelectAnnotaionAction = { [weak self] annotation, selected, manualy in
             
@@ -150,6 +231,8 @@ extension MapVC {
         }
         mapView.didUpdateUserLocationAction = { [weak self] coordinate in
             
+            self?.findFriend(userCoordinate: coordinate)
+            
             guard let userId = Auth.auth().currentUser?.uid else { return }
             
             let itemRef = self?.userRef.child(userId)
@@ -160,8 +243,30 @@ extension MapVC {
         mapView.routeUpdatedAction = { [weak self] route in
             
             guard let targetUserId = self?.mapView.tagetUserAnnotation?.user.uniqueId else { return }
+            self?.goView.updateRoute(route)
             self?.sendRouteToUser(route: route, toUserId: targetUserId)
         }
+        
+    }
+    
+    private func findFriend(userCoordinate:CLLocationCoordinate2D) {
+        
+        guard let tagetUserAnnotation = mapView.tagetUserAnnotation else { return }
+
+        let userLoc = CLLocation(latitude: userCoordinate.latitude, longitude: userCoordinate.longitude)
+        let friendLoc = CLLocation(latitude: tagetUserAnnotation.coordinate.latitude, longitude: tagetUserAnnotation.coordinate.longitude)
+        
+        let distance = userLoc.distance(from: friendLoc)
+        
+        if distance < targetInSightDistance {
+            let alert = Bundle.main.loadNibNamed("Popup", owner: self, options: nil)?[0] as! Popup
+            alert.setup(title: "\(tagetUserAnnotation.user!.name!) found !", message: "You found your friend !")
+            alert.showInWindow(self.view.window!, confetti: true)
+            setOnMyWay(onMyWay: false)
+            goView.hide()
+        }
+        
+        
         
     }
     
@@ -173,7 +278,7 @@ extension MapVC {
         drawerView = DrawerView(expandedHeight:self.view.frame.size.height*1/2, collapsedtHeight:self.view.frame.size.height*1/4)
         
         toggleButton = UIButton(frame: CGRect(x: 40, y: 10, width: drawerView.frame.width - 80, height: 48))
-        toggleButton.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        toggleButton.backgroundColor = UIColor.white
         toggleButton.autoresizingMask = [.flexibleHeight,.flexibleLeftMargin,.flexibleRightMargin]
         toggleButton.layer.cornerRadius = 24
         toggleButton.setTitle("Send emojis to Clarissa", for: .normal)
@@ -197,6 +302,7 @@ extension MapVC {
             self!.mapView.layoutMargins.bottom = self!.mapView.frame.size.height - self!.drawerView.frame.origin.y
             UIView.animate(withDuration: 0.2, animations: {
                 self?.locationButton.alpha = self!.drawerView.frame.origin.y == self!.view.frame.size.height ? 1:0
+                self?.friendOnWayIndicator.alpha = self!.drawerView.frame.origin.y == self!.view.frame.size.height ? 1:0
             })
         }
         
@@ -255,10 +361,22 @@ extension MapVC {
     
     private func toggleOnMyWay() {
         
-        if goView.walkRoute != nil { return }
-        
         if mapView.selectedAnnotations.count == 0 { return }
-        let coord = mapView.selectedAnnotations[0].coordinate
+        guard let selectedAnnot = mapView.selectedAnnotations[0] as? PersonAnnotation else { return }
+        let coord = selectedAnnot.coordinate
+        
+        let isRouteRequested = goView.walkRoute != nil
+        var isRouteToSameUser = true
+
+        if let user = mapView.tagetUserAnnotation?.user, user.uniqueId! != selectedAnnot.user!.uniqueId! {
+            isRouteToSameUser = false
+        }
+        
+        if isRouteRequested, isRouteToSameUser {
+            return
+        }
+
+        setOnMyWay(onMyWay: false)
         
         let centerCoord = mapView.centerCoordinate
         goView.show()
@@ -317,7 +435,7 @@ extension MapVC {
             if route == nil { return }
 
             self?.mapView.route = route
-            let routeInset = UIEdgeInsets(top: PersonAnnotationView.pinSize.height+4, left: 4, bottom: 4, right: 4)
+            let routeInset = UIEdgeInsets(top: PersonAnnotationView.pinSize.height+4, left: 20, bottom: 20, right: 20)
             self?.mapView.setVisibleMapRect(route!.polyline.boundingMapRect, edgePadding: routeInset, animated: true)
             
             if going {
@@ -330,18 +448,17 @@ extension MapVC {
         
         goView.goButtonAction = { [weak self] going in
             
-            self?.goToUser(going: going)
+            self?.setOnMyWay(onMyWay: going)
         
         }
         
     }
     
-    private func goToUser(going:Bool) {
+    private func setOnMyWay(onMyWay:Bool) {
 
         guard let userId = Auth.auth().currentUser?.uid else { return }
         
-        if going {
-            print("on my way launched")
+        if onMyWay {
             if mapView.selectedAnnotations.count == 0 { return }
             guard let selectedAnnot = mapView.selectedAnnotations[0] as? PersonAnnotation else { return }
             guard let route = mapView.route else { return }
@@ -353,8 +470,9 @@ extension MapVC {
             sendRouteToUser(route: route, toUserId: targetUserId)
         }
         else {
-            print("on my way canceled")
             mapView.tagetUserAnnotation = nil
+            mapView.route = nil
+            goView.setOnMyWayMode(false)
             let itemRef = userRef.child(userId)
             itemRef.updateChildValues(["onMyWay":""])
         }
@@ -377,16 +495,6 @@ extension MapVC {
         
         itemRef.updateChildValues(["onMyWay":omwDict])
     }
-    
-    
-//    omwDict = dictionary["onMyWay"] as? [String : AnyObject] {
-//    if let toUser = omwDict["toUser"] as? String, let myId = Auth.auth().currentUser?.uid {
-//    if toUser == myId {
-//    if let transportType = omwDict["transportType"] as? String {
-//    self.transportType = TransportType(rawValue: transportType)
-//    }
-//    self.estimatedArrival = omwDict["estimatedArrival"] as? Int
-    
 
     
 }
@@ -398,39 +506,35 @@ extension MapVC {
 extension MapVC {
     
     private func observeUsers() {
-        // We can use the observe method to listen for new
-        // channels being written to the Firebase DB
-        
-        userChangeRefHandle = userRef.observe(.childChanged) { (snapshot) -> Void in
-            let userData = snapshot.value as! Dictionary<String, AnyObject>
-            let id = snapshot.key
-            if id != Auth.auth().currentUser?.uid {
-                let user = OMWUser(dictionary: userData)
-                if user.coordinates == nil { return }
-                if self.users.contains(user){
-                    self.users.remove(user)
-                }
-                self.users.append(user)
-                self.mapView.reloadMap(users: self.users)
-            }
+
+        userChangeRefHandle = userRef.observe(.childChanged) { [weak self] (snapshot) -> Void in
+            self?.updateUsersOnFirebaseEvent(snapshot)
         }
         
         userAddRefHandle = userRef.observe(.childAdded, with: { [weak self] (snapshot) -> Void in
-            let userData = snapshot.value as! Dictionary<String, AnyObject>
-            let id = snapshot.key
-            if id != Auth.auth().currentUser?.uid {
-                
-                let user = OMWUser(dictionary: userData)
-                if user.coordinates == nil { return }
-                if self?.users == nil { return }
-                if self!.users.contains(user){
-                    self!.users.remove(user)
-                }
-                self!.users.append(user)
-                self!.mapView.reloadMap(users: self!.users)
-                self!.mapView.showAnnotations(self!.mapView.annotations, animated: true)
-            }
+            self?.updateUsersOnFirebaseEvent(snapshot)
+            guard let map = self?.mapView else { return }
+            map.showAnnotations(map.annotations, animated: true)
         })
+    }
+    
+    private func updateUsersOnFirebaseEvent(_ snapshot:DataSnapshot) {
+        
+        let userData = snapshot.value as! Dictionary<String, AnyObject>
+        let id = snapshot.key
+        if id != Auth.auth().currentUser?.uid {
+            
+            let user = OMWUser(dictionary: userData)
+            if user.coordinates == nil { return }
+            if users.contains(user){
+                users.remove(user)
+            }
+            users.append(user)
+            mapView.reloadMap(users: users)
+            showFriendOnWayIndicator()
+            
+        }
+        
     }
     
 }

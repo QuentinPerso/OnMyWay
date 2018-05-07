@@ -42,6 +42,10 @@
 		668F3E1F209F0280007DED77 /* Monge-Home.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 668F3E1E209F0280007DED77 /* Monge-Home.gpx */; };
 		668F3E21209F1873007DED77 /* Home-StMich.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 668F3E20209F1873007DED77 /* Home-StMich.gpx */; };
 		668F3E23209F40DC007DED77 /* mouf-Home.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 668F3E22209F40DC007DED77 /* mouf-Home.gpx */; };
+		6694C0B1209F755C0009C1EB /* Popup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6694C0AF209F755C0009C1EB /* Popup.swift */; };
+		6694C0B2209F755C0009C1EB /* Popup.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6694C0B0209F755C0009C1EB /* Popup.xib */; };
+		6694C0B4209F898E0009C1EB /* Int+TimeString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6694C0B3209F898E0009C1EB /* Int+TimeString.swift */; };
+		6694C0B620A03F110009C1EB /* Color+OMW.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6694C0B520A03F110009C1EB /* Color+OMW.swift */; };
 		A2D8F36E06FBDA6734CCB769 /* Pods_OnMyWayUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 225CBB6CF9213B745581B5BB /* Pods_OnMyWayUITests.framework */; };
 /* End PBXBuildFile section */
 
@@ -107,6 +111,10 @@
 		668F3E1E209F0280007DED77 /* Monge-Home.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "Monge-Home.gpx"; sourceTree = "<group>"; };
 		668F3E20209F1873007DED77 /* Home-StMich.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "Home-StMich.gpx"; sourceTree = "<group>"; };
 		668F3E22209F40DC007DED77 /* mouf-Home.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "mouf-Home.gpx"; sourceTree = "<group>"; };
+		6694C0AF209F755C0009C1EB /* Popup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Popup.swift; sourceTree = "<group>"; };
+		6694C0B0209F755C0009C1EB /* Popup.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Popup.xib; sourceTree = "<group>"; };
+		6694C0B3209F898E0009C1EB /* Int+TimeString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+TimeString.swift"; sourceTree = "<group>"; };
+		6694C0B520A03F110009C1EB /* Color+OMW.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+OMW.swift"; sourceTree = "<group>"; };
 		6B1C669FE1B4DCE05BCAA2C0 /* Pods-OnMyWayUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OnMyWayUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-OnMyWayUITests/Pods-OnMyWayUITests.release.xcconfig"; sourceTree = "<group>"; };
 		918D1E58ECC30DF87FD4D72A /* Pods-OnMyWay.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OnMyWay.release.xcconfig"; path = "Pods/Target Support Files/Pods-OnMyWay/Pods-OnMyWay.release.xcconfig"; sourceTree = "<group>"; };
 		D29100DD6A5FCDBE79401CBB /* Pods-OnMyWayUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OnMyWayUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OnMyWayUITests/Pods-OnMyWayUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -223,6 +231,8 @@
 				663C5393209C30A200AE7CCC /* PersonAnnotation.swift */,
 				663C5392209C30A200AE7CCC /* PersonAnnotationView.swift */,
 				668F3E14209DBAD9007DED77 /* JLTGradientPathRenderer.swift */,
+				6694C0B0209F755C0009C1EB /* Popup.xib */,
+				6694C0AF209F755C0009C1EB /* Popup.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -243,6 +253,8 @@
 				6627FFDC209C992900AE0831 /* Array+Functions.swift */,
 				668F3E05209D0817007DED77 /* Font+Functions.swift */,
 				668F3E1A209E5188007DED77 /* Image+Label.swift */,
+				6694C0B3209F898E0009C1EB /* Int+TimeString.swift */,
+				6694C0B520A03F110009C1EB /* Color+OMW.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -410,6 +422,7 @@
 				668F3E0E209D9294007DED77 /* GoView.xib in Resources */,
 				663A22922098671E00AE28CB /* LaunchScreen.storyboard in Resources */,
 				663A228F2098671E00AE28CB /* Assets.xcassets in Resources */,
+				6694C0B2209F755C0009C1EB /* Popup.xib in Resources */,
 				665F5128209C7AD900904292 /* GoogleService-Info.plist in Resources */,
 				668F3E23209F40DC007DED77 /* mouf-Home.gpx in Resources */,
 				6627FFDF209CB38F00AE0831 /* mapstogpx20180504_152742.gpx in Resources */,
@@ -598,12 +611,15 @@
 			files = (
 				663C5398209C3DA600AE7CCC /* OMWUser.swift in Sources */,
 				663C5394209C30A200AE7CCC /* PersonAnnotationView.swift in Sources */,
+				6694C0B1209F755C0009C1EB /* Popup.swift in Sources */,
+				6694C0B620A03F110009C1EB /* Color+OMW.swift in Sources */,
 				663C5387209A419400AE7CCC /* DrawerView.swift in Sources */,
 				663C538B209A425A00AE7CCC /* InteractivMap.swift in Sources */,
 				663C538E209A452600AE7CCC /* LocationManager.swift in Sources */,
 				668F3E11209D94DA007DED77 /* VerticalButton.swift in Sources */,
 				663A228A2098671C00AE28CB /* MapVC.swift in Sources */,
 				668F3E06209D0817007DED77 /* Font+Functions.swift in Sources */,
+				6694C0B4209F898E0009C1EB /* Int+TimeString.swift in Sources */,
 				663C5395209C30A200AE7CCC /* PersonAnnotation.swift in Sources */,
 				6627FFDD209C992900AE0831 /* Array+Functions.swift in Sources */,
 				668F3E15209DBAD9007DED77 /* JLTGradientPathRenderer.swift in Sources */,

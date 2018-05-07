@@ -48,7 +48,7 @@ class PersonAnnotationView : MKAnnotationView {
         
         //**** Fill color
         createPath(ctx: ctx!, rect: rect)
-        ctx!.setFillColor(#colorLiteral(red: 0.6339642998, green: 0.9293089666, blue: 0.1291585762, alpha: 1).cgColor)
+        ctx!.setFillColor(UIColor.omwGreen.cgColor)
         ctx?.setShadow(offset: CGSize(width: 0, height: 0), blur: 2, color: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0.3376498288).cgColor)
         ctx?.fillPath()
         ctx?.setShadow(offset: CGSize(width: 0, height: 0), blur: 0, color: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0).cgColor)
@@ -56,7 +56,7 @@ class PersonAnnotationView : MKAnnotationView {
                 //**** Border color
                 createPath(ctx: ctx!, rect: rect)
                 ctx?.setLineWidth(strokW)
-                ctx?.setStrokeColor(#colorLiteral(red: 0.6339642998, green: 0.9293089666, blue: 0.1291585762, alpha: 1).cgColor)
+                ctx?.setStrokeColor(UIColor.omwGreen.cgColor)
                 ctx?.strokePath()
         
 //        //**** Image
@@ -112,8 +112,7 @@ class PersonAnnotationView : MKAnnotationView {
     
     public func createParticles(type:TransportType, eta:Int) {
         
-    
-        if transportType == type, arrivalTime == eta {
+        if transportType == type, arrivalTime?.roundedTimeString() == eta.roundedTimeString() {
             return
         }
         transportType = type
@@ -145,15 +144,14 @@ class PersonAnnotationView : MKAnnotationView {
         
         let strokeTextAttributes: [NSAttributedStringKey: Any] = [
             .strokeColor : #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1),
-            .foregroundColor : #colorLiteral(red: 0, green: 0.7843137255, blue: 1, alpha: 1),
+            .foregroundColor : UIColor.omwBlue,
             .strokeWidth : -5.0,
             .font : UIFont.omwFont(size: 17, weight: .heavy)
         ]
-        
-        print(strokeTextAttributes)
-        
+
         let label = UILabel(frame: CGRect.zero)
-        label.attributedText = NSMutableAttributedString(string: "\(transportType == .bike ? eta/2 : eta)min", attributes: strokeTextAttributes)
+        let eta = transportType == .bike ? eta/2 : eta
+        label.attributedText = NSMutableAttributedString(string: eta.roundedTimeString(), attributes: strokeTextAttributes)
         label.sizeToFit()
 
         let etaCell = makeEmitterCell(0.66, image: UIImage.imageWithLabel(label: label))

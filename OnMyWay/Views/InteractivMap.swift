@@ -11,7 +11,7 @@ import MapKit
 
 class InteractivMap: MKMapView {
     
-    private let distanceThreshold = 100
+    
     private var previousLocation:CLLocation?
     
     var tagetUserAnnotation:PersonAnnotation?
@@ -128,7 +128,7 @@ extension InteractivMap : UIGestureRecognizerDelegate {
                 }
                 guard let annotView = view(for: pAnnot) as? PersonAnnotationView else { continue }
                 if let userETA = user.estimatedArrival, let transportType = user.transportType {
-                    annotView.createParticles(type: transportType, eta: userETA/60)
+                    annotView.createParticles(type: transportType, eta: userETA)
                     pAnnot.user.estimatedArrival = userETA
                     pAnnot.user.transportType = transportType
                 }
@@ -147,8 +147,22 @@ extension InteractivMap : UIGestureRecognizerDelegate {
             if !annotUsers.contains(user) {
                 addAnnotation(PersonAnnotation(user: user))
             }
-            
         }
+    }
+    
+    func annotationViewBounceAnimation(_ annotView:UIView, scaleFactor sf:CGFloat) {
+        
+        annotView.transform = CGAffineTransform(scaleX: sf, y: 1)
+        UIView.animateKeyframes(withDuration: 1, delay: 0, options: [.repeat, .allowUserInteraction], animations: {
+            UIView.addKeyframe(withRelativeStartTime: 0.0, relativeDuration: 0.5, animations: {
+                annotView.transform = CGAffineTransform(translationX: 0, y: PersonAnnotationView.pinSize.height * (1 - sf) / 2 ).scaledBy(x: 1, y: sf)
+            })
+            UIView.addKeyframe(withRelativeStartTime:0.5, relativeDuration: 0.5, animations: {
+                annotView.transform = CGAffineTransform(scaleX: sf, y: 1)
+            })
+            
+        }, completion: nil)
+        
     }
     
     
@@ -177,7 +191,7 @@ extension InteractivMap {
 
         let image = #imageLiteral(resourceName: "headingView")
         headingImageView = UIImageView(image: image)
-        headingImageView?.tintColor = #colorLiteral(red: 0, green: 0.7843137255, blue: 1, alpha: 1)
+        headingImageView?.tintColor = UIColor.omwBlue
         
         let frame = CGRect(x: (annotationView.frame.size.width - image.size.width)/2,
                            y: (annotationView.frame.size.height - image.size.height)/2,
@@ -236,12 +250,6 @@ extension InteractivMap {
         }
         
         
-//        for annot in annotations {
-//            if let pAnnot = annot as? PersonAnnotation, pAnnot.user.estimatedArrival != nil {
-//
-//            }
-//        }
-        
         if userLocation.distance(from: previousLocation!) > distanceThreshold {
             LocationManager.requestRoute(coordinate: tagetUserAnnotation.coordinate, type: route.transportType) { [weak self] (route, error) in
                 if route != nil {
@@ -278,6 +286,8 @@ extension InteractivMap {
         
     }
     
+    
+    
 }
 
 
@@ -291,7 +301,8 @@ extension InteractivMap : MKMapViewDelegate {
         
         if let annotation = annotation as? PersonAnnotation {
             
-            let identifier = "cinemaAnotView"+annotation.user.name
+            
+            let identifier = "personAnnotView"+annotation.user.name
             var annotationView: PersonAnnotationView
             if let dequeuedView = dequeueReusableAnnotationView(withIdentifier: identifier) as? PersonAnnotationView{
                 dequeuedView.annotation = annotation
@@ -303,6 +314,9 @@ extension InteractivMap : MKMapViewDelegate {
                 annotationView.initLayout()
             }
             
+            if let userETA = annotation.user.estimatedArrival, let transportType = annotation.user.transportType {
+                annotationView.createParticles(type: transportType, eta: userETA)
+            }
             
             
             return annotationView
@@ -349,6 +363,7 @@ extension InteractivMap : MKMapViewDelegate {
             updateRoute(userLocation: location)
         }
         
+        
  
     }
     
@@ -368,34 +383,21 @@ extension InteractivMap : MKMapViewDelegate {
                 let sf:CGFloat = 0.9
                 annotView.transform = CGAffineTransform(translationX: 0, y: placeAnnotView.frame.size.height).scaledBy(x: 0, y: 0)
                 UIView.animate(withDuration: 0.2, delay: delay, options: .curveEaseInOut, animations: {
-                    //annotView.transform = annotView.isSelected ? .identity : placeAnnotView.unselectedTransform
-                    annotView.transform = CGAffineTransform(translationX: 0, y: PersonAnnotationView.pinSize.height * (1 - 1) / 2 ).scaledBy(x: sf, y: 1)
+                    annotView.transform = CGAffineTransform(scaleX: sf, y: 1)
                 }, completion: { ended in
                     
+                    self.annotationViewBounceAnimation(annotView, scaleFactor: sf)
                     
-                    UIView.animateKeyframes(withDuration: 1, delay: 0, options: [.repeat, .allowUserInteraction], animations: {
-                        UIView.addKeyframe(withRelativeStartTime: 0.0, relativeDuration: 0.5, animations: {
-                            annotView.transform = CGAffineTransform(translationX: 0, y: PersonAnnotationView.pinSize.height * (1 - sf) / 2 ).scaledBy(x: 1, y: sf)
-                        })
-                        UIView.addKeyframe(withRelativeStartTime:0.5, relativeDuration: 0.5, animations: {
-                            annotView.transform = CGAffineTransform(translationX: 0, y: PersonAnnotationView.pinSize.height * (1 - 1) / 2 ).scaledBy(x: sf, y: 1)
-                        })
-                        
-                    }, completion: nil)
                 })
                 delay += 0.05
             }
-            else if annotView.annotation is MKUserLocation {
-                //addHeadingView(toAnnotationView: annotView)
-            }
-            
         }
     }
     
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) ->MKOverlayRenderer {
         
         if let polyline = polyline {
-            let gradientColors = [#colorLiteral(red: 0.6339642998, green: 0.9293089666, blue: 0.1291585762, alpha: 1),#colorLiteral(red: 0, green: 0.7843137255, blue: 1, alpha: 1)]
+            let gradientColors = [UIColor.omwBlue, UIColor.omwGreen]
             let polylineRenderer = JLTGradientPathRenderer(polyline: polyline, colors: gradientColors)
             polylineRenderer.lineWidth = 7
             return polylineRenderer

@@ -69,9 +69,13 @@
         /*
          Create bounding box around path and get top and bottom points
          */
-        let boundingBox = self.path.boundingBoxOfPath
-        let gradientStart = boundingBox.origin
-        let gradientEnd   = CGPoint(x:boundingBox.maxX, y:boundingBox.maxY)
+
+        let gradientStart:CGPoint = self.point(for: self.polyline.points()[0])
+        let gradientEnd:CGPoint = self.point(for: self.polyline.points()[self.polyline.pointCount-1])
+        
+//        let boundingBox = self.path.boundingBoxOfPath
+//        let gradientStart = boundingBox.origin
+//        let gradientEnd   = CGPoint(x:boundingBox.maxX, y:boundingBox.maxY)
         
         /*
          Draw the gradient in the clipped context of the path
@@ -90,7 +94,7 @@
     override func createPath() {
         let path: CGMutablePath  = CGMutablePath()
         var pathIsEmpty: Bool = true
-        
+
         for i in 0...self.polyline.pointCount-1 {
             
             let point: CGPoint = self.point(for: self.polyline.points()[i])

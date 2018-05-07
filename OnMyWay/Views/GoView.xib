@@ -92,6 +92,7 @@
             <connections>
                 <outlet property="bikeButton" destination="ui4-tT-A5d" id="wh3-qD-fJ8"/>
                 <outlet property="carButton" destination="WSY-ZW-xss" id="BAK-v2-cD4"/>
+                <outlet property="goButton" destination="CTc-2S-Tjx" id="skm-KM-gBD"/>
                 <outlet property="trainButton" destination="tal-pV-Nc4" id="udC-Cx-e3i"/>
                 <outlet property="walkButton" destination="dJZ-z3-ZJp" id="XUV-ge-vgg"/>
                 <outletCollection property="transportButtons" destination="dJZ-z3-ZJp" collectionClass="NSMutableArray" id="epk-2d-vVp"/>

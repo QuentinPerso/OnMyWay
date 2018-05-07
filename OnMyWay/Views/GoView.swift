@@ -11,6 +11,8 @@ import MapKit
 
 class GoView: UIView {
     
+    @IBOutlet weak var goButton: UIButton!
+    
     @IBOutlet var transportButtons: [VerticalButton]!
     
     @IBOutlet weak var walkButton: VerticalButton!
@@ -38,7 +40,40 @@ class GoView: UIView {
         for button in transportButtons {
             button.alpha = 0.5
         }
+        goButton.setTitle("", for: .selected)
         walkButton.alpha = 1
+        resetRoutes()
+    }
+    
+    public func setOnMyWayMode(_ onMyWay:Bool) {
+        
+        UIView.transition(with: goButton, duration: 0.2, options: .transitionFlipFromLeft, animations: {
+            self.goButton.isSelected = onMyWay
+        }, completion: nil)
+        
+        isInHisWayMode = onMyWay
+        for button in transportButtons {
+            if button.alpha != 1 {
+                UIView.transition(with: button, duration: 0.2, options: .transitionCrossDissolve, animations: {
+                    button.isHidden = onMyWay
+                }, completion: nil)
+                
+            }
+        }
+    }
+    
+    public func updateRoute(_ route:MKRoute) {
+        
+        switch selectedTransportType {
+        case .bike:
+            bikeRoute = route
+        case .walk:
+            walkRoute = route
+        case .transit:
+            trainRoute = route
+        case .car:
+            carRoute = route
+        }
     }
     
     private func setButtonState(_ button:UIButton, route:MKRoute?) {
@@ -47,15 +82,24 @@ class GoView: UIView {
             button.isEnabled = false
         }
         else {
-            let title = "\(Int(route!.expectedTravelTime/(button == bikeButton ? 120 : 60))) min"
-            button.setTitle(title, for: .normal)
+            goButton.isEnabled = true
+            let eta = button == bikeButton ? route!.expectedTravelTime/2 : route!.expectedTravelTime
+            button.setTitle(Int(eta).roundedTimeString(), for: .normal)
             button.isEnabled = true
-            if button.alpha == 1 {
+            if button.alpha == 1, !isInHisWayMode {
                 transportClicked(button)
             }
         }
     
         
+    }
+    
+    private func resetRoutes() {
+        walkRoute = nil
+        carRoute = nil
+        trainRoute = nil
+        bikeRoute = nil
+        goButton.isEnabled = false
     }
     
     @IBAction func transportClicked(_ sender: UIButton) {
@@ -91,13 +135,9 @@ class GoView: UIView {
     }
 
     @IBAction func goButtonClicked(_ sender: UIButton) {
-        
-        sender.setTitle("", for: .selected)
-        UIView.transition(with: sender, duration: 0.2, options: .transitionFlipFromLeft, animations: {
-            sender.isSelected = !sender.isSelected
-        }, completion: nil)
-        
-        isInHisWayMode = sender.isSelected
+
+        let omw = !sender.isSelected
+        setOnMyWayMode(omw)
         goButtonAction?(isInHisWayMode)
         hide()
     }
@@ -134,10 +174,7 @@ class GoView: UIView {
         }), completion: { (ended) in
             if ended { }
         })
-        walkRoute = nil
-        carRoute = nil
-        trainRoute = nil
-        bikeRoute = nil
+        resetRoutes()
         stateChangedAction?(true)
     }
 
