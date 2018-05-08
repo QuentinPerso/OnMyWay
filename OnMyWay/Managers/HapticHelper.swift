@@ -8,7 +8,7 @@
 
 import UIKit
 
-class HapticHelper: NSObject {
+class HapticHelper {
     
     static func impact(strenght:UIImpactFeedbackStyle = .medium){
         

@@ -20,8 +20,7 @@ class MapVC: UIViewController {
     private lazy var userRef: DatabaseReference = Database.database().reference().child("users")
     
     private var mapView: InteractivMap!
-    private var locationButton: UIButton!
-    private var friendOnWayIndicator:UIImageView!
+    private var locationView:LocationView!
     private var drawerView:DrawerView!
     private var toggleButton:UIButton!
     private var emojiCollection:EmojiCollection!
@@ -110,8 +109,9 @@ extension MapVC {
         setupLocationButton()
         
         self.view.addSubview(mapView)
-        self.view.addSubview(locationButton)
-        self.view.addSubview(friendOnWayIndicator)
+        self.view.addSubview(locationView)
+//        self.view.addSubview(locationButton)
+//        self.view.addSubview(friendOnWayIndicator)
         self.view.addSubview(drawerView)
         self.view.addSubview(goView)
         
@@ -131,17 +131,11 @@ extension MapVC {
             bottomPadding = window?.safeAreaInsets.bottom ?? 0
         }
         locButtonFrame.origin.y = view.frame.size.height - bottomPadding - 80
-        locationButton = UIButton(frame: locButtonFrame)
-        locationButton.center.x = view.center.x
-        locationButton.setImage(#imageLiteral(resourceName: "locationButton"), for: .normal)
-        locationButton.addTarget(self, action: #selector(self.locationButtonClicked), for: .touchUpInside)
         
-        friendOnWayIndicator = UIImageView(image: #imageLiteral(resourceName: "Omw"))
-        var indicatorCenter = locationButton.frame.origin
-        indicatorCenter.x += locButtonFrame.size.width/4
-        indicatorCenter.y += locButtonFrame.size.height/4
-        friendOnWayIndicator.center = indicatorCenter
-        friendOnWayIndicator.isHidden = true
+        locationView = LocationView(frame: locButtonFrame)
+        locationView.center.x = view.center.x
+        locationView.addTarget(self, action: #selector(self.locationButtonClicked), for: .touchUpInside)
+
         
     }
     
@@ -154,11 +148,13 @@ extension MapVC {
             }
         }
         
-        if annotShow.count != 0 {
+        if annotShow.count != 0, locationView.isOMWSelected == false {
             mapView.showAnnotations(annotShow, animated: true)
+            locationView.isOMWSelected = true
         }
         else {
             mapView.showAnnotations(mapView.annotations, animated: true)
+            locationView.isOMWSelected = false
         }
         
     }
@@ -173,30 +169,7 @@ extension MapVC {
             }
         }
 
-        guard let indicator = friendOnWayIndicator else { return }
-        
-        if indicator.isHidden == !isFriendsOnWay {
-            return
-        }
-        
-        indicator.isHidden = !isFriendsOnWay
-        
-        if isFriendsOnWay {
-            UIView.animateKeyframes(withDuration: 0.4, delay: 0, options: [.repeat], animations: {
-                UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 0.5, animations: {
-                    indicator.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
-                })
-                UIView.addKeyframe(withRelativeStartTime:0.5, relativeDuration: 0.5, animations: {
-                    indicator.transform = CGAffineTransform(scaleX: 1, y: 1)
-                })
-                
-            }, completion: nil)
-        }
-        else {
-            indicator.transform = CGAffineTransform(scaleX: 1, y: 1)
-        }
-        
-        
+        locationView.setFriendOnHisWay(isFriendsOnWay)
         
         
     }
@@ -301,8 +274,8 @@ extension MapVC {
             if self == nil { return }
             self!.mapView.layoutMargins.bottom = self!.mapView.frame.size.height - self!.drawerView.frame.origin.y
             UIView.animate(withDuration: 0.2, animations: {
-                self?.locationButton.alpha = self!.drawerView.frame.origin.y == self!.view.frame.size.height ? 1:0
-                self?.friendOnWayIndicator.alpha = self!.drawerView.frame.origin.y == self!.view.frame.size.height ? 1:0
+                self?.locationView.alpha = self!.drawerView.frame.origin.y == self!.view.frame.size.height ? 1:0
+
             })
         }
         
@@ -382,22 +355,22 @@ extension MapVC {
         goView.show()
         mapView.set3DCamera(coord: centerCoord, animated: true)
         
-        LocationManager.requestRoute(coordinate: coord, type: .walking) { [weak self] route, error in
+        LocationManager.shared.requestRoute(coordinate: coord, type: .walking) { [weak self] route, error in
             guard let route = route else { return }
             self?.goView.walkRoute = route
         }
         
-        LocationManager.requestRoute(coordinate: coord, type: .automobile) { [weak self] route, error in
+        LocationManager.shared.requestRoute(coordinate: coord, type: .automobile) { [weak self] route, error in
             guard let route = route else { return }
             self?.goView.carRoute = route
         }
         
-        LocationManager.requestRoute(coordinate: coord, type: .transit) { [weak self] route, error in
+        LocationManager.shared.requestRoute(coordinate: coord, type: .transit) { [weak self] route, error in
             guard let route = route else { return }
             self?.goView.trainRoute = route
         }
         
-        LocationManager.requestRoute(coordinate: coord, type: .walking) { [weak self] route, error in
+        LocationManager.shared.requestRoute(coordinate: coord, type: .walking) { [weak self] route, error in
             guard let route = route else { return }
             self?.goView.bikeRoute = route
         }
@@ -474,7 +447,7 @@ extension MapVC {
             mapView.route = nil
             goView.setOnMyWayMode(false)
             let itemRef = userRef.child(userId)
-            itemRef.updateChildValues(["onMyWay":""])
+            itemRef.child("onMyWay").removeValue()
         }
         
         
@@ -486,12 +459,12 @@ extension MapVC {
         guard let userId = Auth.auth().currentUser?.uid else { return }
         
         let itemRef = userRef.child(userId)
-        
+
         let omwDict = ["toUser": toUserId,
                        "transportType": goView.selectedTransportType.rawValue,
                        "estimatedArrival": route.expectedTravelTime] as [String : Any]
         
-        
+        //
         
         itemRef.updateChildValues(["onMyWay":omwDict])
     }

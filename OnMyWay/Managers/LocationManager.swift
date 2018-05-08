@@ -12,6 +12,7 @@ import MapKit
 typealias LMLocationUpdateClosure = ((_ coordinate:CLLocationCoordinate2D, _ error:String?)->())?
 
 
+//TODO:Change
 @objc
 protocol LocationManagerDelegate : class
 {
@@ -41,7 +42,7 @@ class LocationManager: NSObject{
     fileprivate var singleUpdate = false
     
     var locationStatus : String = "Calibrating"// to pass in handler
-    fileprivate var locationManager: CLLocationManager!
+    fileprivate var clLocManager: CLLocationManager!
     
     var locationAlwaysGranted:(()->())?
     var locationInUseGranted:(()->())?
@@ -84,18 +85,18 @@ class LocationManager: NSObject{
     
     func startUpdatingDirection(_ completion:((_ heading:CLLocationDirection)->())? = nil){
         
-        if locationManager == nil { return }
+        if clLocManager == nil { return }
         
         headingUpateClosure = completion
         
-        locationManager.startUpdatingHeading()
+        clLocManager.startUpdatingHeading()
     }
     
     func stopUpdatingDirection(){
         
-        if locationManager == nil { return }
+        if clLocManager == nil { return }
         
-        locationManager.stopUpdatingHeading()
+        clLocManager.stopUpdatingHeading()
         
     }
     
@@ -103,16 +104,16 @@ class LocationManager: NSObject{
     
     fileprivate func initLocationManager() {
         
-        if locationManager != nil { return }
+        if clLocManager != nil { return }
         
-        locationManager = CLLocationManager()
+        clLocManager = CLLocationManager()
         
-        locationManager.delegate = self
+        clLocManager.delegate = self
         
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        clLocManager.desiredAccuracy = kCLLocationAccuracyBest
         
-        //locationManager.requestAlwaysAuthorization()
-        locationManager.requestWhenInUseAuthorization()
+        //clLocManager.requestAlwaysAuthorization()
+        clLocManager.requestWhenInUseAuthorization()
         
         
     }
@@ -123,13 +124,13 @@ class LocationManager: NSObject{
     
     
     fileprivate func startCoordUpdate(){
-        locationManager.startUpdatingLocation()
+        clLocManager.startUpdatingLocation()
     }
     
     
     fileprivate func stopCoordUpdate(){
         
-        locationManager.stopUpdatingLocation()
+        clLocManager.stopUpdatingLocation()
         
     }
     
@@ -137,7 +138,7 @@ class LocationManager: NSObject{
     // MARK: - Routes
     //************************************
     
-    static func requestRoute(coordinate:CLLocationCoordinate2D,
+    func requestRoute(coordinate:CLLocationCoordinate2D,
                              type:MKDirectionsTransportType,
                              completion:@escaping (_ route:MKRoute?, _ error:Error?)->()) {
         
@@ -207,7 +208,7 @@ extension LocationManager:CLLocationManagerDelegate {
         coordinates = coord
         lastLocation = location
         if singleUpdate {
-            locationManager.stopUpdatingLocation()
+            clLocManager.stopUpdatingLocation()
             singleUpdate = false
         }
         

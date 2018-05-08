@@ -251,7 +251,7 @@ extension InteractivMap {
         
         
         if userLocation.distance(from: previousLocation!) > distanceThreshold {
-            LocationManager.requestRoute(coordinate: tagetUserAnnotation.coordinate, type: route.transportType) { [weak self] (route, error) in
+            LocationManager.shared.requestRoute(coordinate: tagetUserAnnotation.coordinate, type: route.transportType) { [weak self] (route, error) in
                 if route != nil {
                     self?.route = route
                     self?.routeUpdatedAction?(route!)
