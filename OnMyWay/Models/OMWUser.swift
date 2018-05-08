@@ -19,13 +19,19 @@ enum TransportType:String {
     static let allValues = [walk, car, transit, bike]
 }
 
-class OMWUser: NSObject, NSCoding {
+class OMWUser: NSObject{
+    
+    private static let kId = "uniqueid"
+    private static let kName = "userName"
+    private static let kCoord = "coordinates"
+    private static let kOMW = "onMyWay"
     
     var uniqueId: String!
     var name: String!
     var coordinates:CLLocationCoordinate2D!
     var estimatedArrival:Int?
     var transportType:TransportType?
+    var omw:OMWOnMyWay?
     
     
     override func isEqual(_ object: Any?) -> Bool {
@@ -34,45 +40,77 @@ class OMWUser: NSObject, NSCoding {
     }
     
     init(dictionary:[String : AnyObject]) {
-        // these properties can't be changed after this init.
-        self.uniqueId = dictionary["uniqueid"] as! String
-        self.name = dictionary["userName"] as! String
-        if let coordDict = dictionary["coordinates"] as? [String : AnyObject] {
-            if let lat = coordDict["lat"] as? Double, let lng = coordDict["lng"] as? Double {
-                self.coordinates = CLLocationCoordinate2D(latitude: lat, longitude: lng)
-            }
+    
+        super.init()
+        uniqueId = dictionary[OMWUser.kId] as! String
+        name = dictionary[OMWUser.kName] as! String
+        if let coordDict = dictionary[OMWUser.kCoord] as? [String : AnyObject] {
+            coordinates = CLLocationCoordinate2D(dictionary: coordDict)
         }
         
-        if let omwDict = dictionary["onMyWay"] as? [String : AnyObject] {
-            if let toUser = omwDict["toUser"] as? String, let myId = Auth.auth().currentUser?.uid {
-                if toUser == myId {
-                    if let transportType = omwDict["transportType"] as? String {
-                        self.transportType = TransportType(rawValue: transportType)
-                    }
-                    self.estimatedArrival = omwDict["estimatedArrival"] as? Int
-                }
+        if let omwDict = dictionary[OMWUser.kOMW] as? [String : AnyObject] {
+            let onAWay = OMWOnMyWay(dictionary: omwDict)
+            if onAWay.toUser == UserManager.shared.user.uniqueId {
+                omw = onAWay
             }
         }
+    }
+    
+    static func toDataBaseFormat(uniqueId:String,
+                                 name:String,
+                                 coordinates:CLLocationCoordinate2D? = nil,
+                                 omw:OMWOnMyWay? = nil) -> [String:Any]
+    {
         
+        var dict:[String:Any] = [ kName: name, kId: uniqueId]
         
+        if let coord = coordinates {
+            dict[kCoord] = ["lat":coord.latitude, "lng": coord.longitude]
+        }
         
-        
-        
-        super.init()
-        
+        return dict
         
     }
     
-    public func encode(with aCoder: NSCoder) {
-        aCoder.encode(uniqueId, forKey: "uniqueId")
+}
+
+class OMWOnMyWay:NSObject {
+    
+    private static let kToUser = "toUser"
+    private static let kType = "transportType"
+    private static let kEta = "estimatedArrival"
+    
+    var toUser: String!
+    var transportType: TransportType!
+    var estimatedArrival:Int!
+    
+    init(dictionary:[String : AnyObject]) {
+        
+        toUser = dictionary[OMWOnMyWay.kToUser] as! String
+        
+        transportType = TransportType(rawValue: dictionary[OMWOnMyWay.kType] as! String)
+        
+        estimatedArrival = dictionary[OMWOnMyWay.kEta] as! Int
+   
     }
     
-    
-    required init?(coder aDecoder: NSCoder) {
-        self.uniqueId = aDecoder.decodeObject(forKey: "uniqueId") as? String
-        super.init()
+    static func toDataBaseFormat(toUserId:String, type:TransportType, eta:Int) {
+        
     }
     
+}
+
+
+extension CLLocationCoordinate2D {
     
+    init(dictionary:[String : AnyObject]) {
+        if let lat = dictionary["lat"] as? Double, let lng = dictionary["lng"] as? Double {
+            self.init(latitude: lat, longitude: lng)
+        }
+        else {
+            self.init()
+        }
+        
+    }
     
 }

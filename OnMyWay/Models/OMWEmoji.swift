@@ -18,8 +18,7 @@ class OMWEmoji: NSObject {
         self.image = image
         self.isOnMyWay = onMyWay
         super.init()
-        
-        
+  
     }
     
 }

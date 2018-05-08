@@ -23,7 +23,6 @@ class LoginVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print(nameField.font)
         setupKeyboard()
     }
     
@@ -32,11 +31,18 @@ class LoginVC: UIViewController {
         NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillChangeFrame, object: nil)
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
     // MARK: Actions
     
     @IBAction func loginDidTouch(_ sender: AnyObject) {
     
-        if nameField?.text != "" {
+        if let name = nameField?.text, name != "" {
+            UserManager.shared.connect(name: name) { [weak self] (user) in
+             //   <#code#>
+            }
             Auth.auth().signInAnonymously(completion: { (user, error) in
                 if let err:Error = error {
                     print(err.localizedDescription)
