@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 
 class LoginVC: UIViewController {
     
@@ -16,8 +15,6 @@ class LoginVC: UIViewController {
     @IBOutlet weak var bottomLayoutGuideConstraint: NSLayoutConstraint!
     
     private var initialBotConstraint:CGFloat!
-    
-    private lazy var userRef: DatabaseReference = Database.database().reference().child("users")
     
     // MARK: View Lifecycle
     
@@ -41,26 +38,8 @@ class LoginVC: UIViewController {
     
         if let name = nameField?.text, name != "" {
             UserManager.shared.connect(name: name) { [weak self] (user) in
-             //   <#code#>
+                self?.presentMapVC()
             }
-            Auth.auth().signInAnonymously(completion: { (user, error) in
-                if let err:Error = error {
-                    print(err.localizedDescription)
-                    return
-                }
-
-                let itemRef = self.userRef.child(user!.uid)
-                
-                let userItem = [
-                    "userName": self.nameField.text!,
-                    "uniqueid": user!.uid
-                    ]
-                
-                itemRef.setValue(userItem)
-                
-                self.presentMapVC()
-                
-            })
         }
     }
     
@@ -105,7 +84,6 @@ extension LoginVC {
         
         guard let userInfo = notification.userInfo else { return }
         
-        //let frameStart = (userInfo[UIKeyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue
         let frameEnd = (userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         let animTime = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as! NSValue) as? Double
         let curve = UIViewAnimationOptions(rawValue: UInt((userInfo[UIKeyboardAnimationCurveUserInfoKey] as! NSNumber).intValue << 16))

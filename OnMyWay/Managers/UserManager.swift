@@ -8,18 +8,19 @@
 
 import Foundation
 import Firebase
+import CoreLocation
 
 
-class UserManager: NSObject {
-    
-    
-    
+class UserManager {
+
     private lazy var userRef: DatabaseReference = Database.database().reference().child("users")
     
-    public var user:OMWUser!
+    public var userId:String? {
+        return Auth.auth().currentUser?.uid
+    }
+ //   public var user:OMWUser!
     
     static let shared = UserManager()
-    private override init(){ super.init() }
     
     public func connect(name:String, completion:((_ success:Bool)->())?) {
         
@@ -30,6 +31,8 @@ class UserManager: NSObject {
                 return
             }
             guard let id = user?.uid else { return }
+            //self?.user = OMWUser(id: id, nam: name)
+            
             self?.createRemoteUser(name: name, id: id)
             completion?(true)
             
@@ -44,9 +47,34 @@ class UserManager: NSObject {
     }
     
     
-    public func updateOnMyWayStatus() {
+    public func update(name:String? = nil,
+                       coordinate:CLLocationCoordinate2D? = nil,
+                       omwDictionary:[String : Any]? = nil,
+                       removeOmw:Bool = false) {
         
+        guard let userId = UserManager.shared.userId else { return }
+        
+        let itemRef = userRef.child(userId)
+        
+        if removeOmw {
+            itemRef.child(OMWUser.kOMW).removeValue()
+            return
+        }
+//        if let coord = coordinate {
+//            user.coordinates = coord
+//        }
+//        if name != nil {
+//            user.name = name
+//        }
+//        if omwDictionary != nil {
+//            user.omw = OMWOnMyWay(dictionary: omwDictionary! as [String : AnyObject])
+//        }
+        let userNewValues = OMWUser.toDataBaseFormat(uniqueId: nil, name: name, coordinates: coordinate, omw: omwDictionary)
+
+        itemRef.updateChildValues(userNewValues)
     }
     
     
 }
+
+

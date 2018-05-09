@@ -8,7 +8,6 @@
 
 import Foundation
 import CoreLocation
-import Firebase
 
 enum TransportType:String {
     case walk    = "walk"
@@ -24,13 +23,11 @@ class OMWUser: NSObject{
     private static let kId = "uniqueid"
     private static let kName = "userName"
     private static let kCoord = "coordinates"
-    private static let kOMW = "onMyWay"
+    public static let kOMW = "onMyWay"
     
     var uniqueId: String!
     var name: String!
     var coordinates:CLLocationCoordinate2D!
-    var estimatedArrival:Int?
-    var transportType:TransportType?
     var omw:OMWOnMyWay?
     
     
@@ -50,22 +47,41 @@ class OMWUser: NSObject{
         
         if let omwDict = dictionary[OMWUser.kOMW] as? [String : AnyObject] {
             let onAWay = OMWOnMyWay(dictionary: omwDict)
-            if onAWay.toUser == UserManager.shared.user.uniqueId {
+            if onAWay.toUser == UserManager.shared.userId {
                 omw = onAWay
             }
         }
     }
     
-    static func toDataBaseFormat(uniqueId:String,
-                                 name:String,
+    init(id:String, nam:String) {
+        
+        super.init()
+        uniqueId = id
+        name = nam
+
+    }
+    
+    static func toDataBaseFormat(uniqueId:String? = nil,
+                                 name:String? = nil,
                                  coordinates:CLLocationCoordinate2D? = nil,
-                                 omw:OMWOnMyWay? = nil) -> [String:Any]
+                                 omw:[String : Any]? = nil) -> [String:Any]
     {
         
-        var dict:[String:Any] = [ kName: name, kId: uniqueId]
+        var dict:[String:Any] = [:]
+        
+        if let name = name {
+            dict[kName] = name
+        }
+        if let id = uniqueId {
+            dict[kId] = id
+        }
         
         if let coord = coordinates {
             dict[kCoord] = ["lat":coord.latitude, "lng": coord.longitude]
+        }
+        
+        if let omwDict = omw {
+            dict[kOMW] = omwDict
         }
         
         return dict
@@ -94,7 +110,12 @@ class OMWOnMyWay:NSObject {
    
     }
     
-    static func toDataBaseFormat(toUserId:String, type:TransportType, eta:Int) {
+    static func toDataBaseFormat(toUserId:String, type:TransportType, eta:Double) -> [String : Any] {
+        
+        return [kToUser: toUserId,
+                kType: type.rawValue,
+                kEta: eta] as [String : Any]
+        
         
     }
     

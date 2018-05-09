@@ -19,11 +19,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         FirebaseApp.configure()
 
-//        if Auth.auth().currentUser != nil {
-//            let mapVC = MapVC()
-//            window?.rootViewController = mapVC
-//            window?.makeKeyAndVisible()
-//        }
+        if UserManager.shared.userId != nil {
+            let mapVC = MapVC()
+            window?.rootViewController = mapVC
+            window?.makeKeyAndVisible()
+        }
         return true
     }
 

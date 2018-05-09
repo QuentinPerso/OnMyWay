@@ -27,7 +27,6 @@ class InteractivMap: MKMapView {
     var polyline:MKPolyline? {
         didSet {
             if let prevLine = oldValue {
-                
                 remove(prevLine)
             }
             if polyline != nil {
@@ -37,8 +36,8 @@ class InteractivMap: MKMapView {
         }
     }
     
-    var didSelectAnnotaionAction:((_ annotation:MKAnnotation, _ selected:Bool, _ manualy:Bool)->())?
-    var didDeselectAllAnnotaionAction:(()->())?
+    var didSelectAnnotationAction:((_ annotation:MKAnnotation, _ selected:Bool, _ manualy:Bool)->())?
+    var didDeselectAllAnnotationAction:(()->())?
     var didUpdateUserLocationAction:((_ userLocation:CLLocationCoordinate2D)->())?
     var routeUpdatedAction:((MKRoute)->())?
     
@@ -127,14 +126,12 @@ extension InteractivMap : UIGestureRecognizerDelegate {
                     pAnnot.coordinate = newCoord!
                 }
                 guard let annotView = view(for: pAnnot) as? PersonAnnotationView else { continue }
-                if let userETA = user.estimatedArrival, let transportType = user.transportType {
+                if let userETA = user.omw?.estimatedArrival, let transportType = user.omw?.transportType {
                     annotView.createParticles(type: transportType, eta: userETA)
-                    pAnnot.user.estimatedArrival = userETA
-                    pAnnot.user.transportType = transportType
+                    pAnnot.user.omw = user.omw
                 }
                 else {
-                    pAnnot.user.estimatedArrival = nil
-                    pAnnot.user.transportType = nil
+                    pAnnot.user.omw = nil
                     annotView.stopParticles()
                 }
                 
@@ -314,7 +311,7 @@ extension InteractivMap : MKMapViewDelegate {
                 annotationView.initLayout()
             }
             
-            if let userETA = annotation.user.estimatedArrival, let transportType = annotation.user.transportType {
+            if let userETA = annotation.user.omw?.estimatedArrival, let transportType = annotation.user.omw?.transportType {
                 annotationView.createParticles(type: transportType, eta: userETA)
             }
             
@@ -328,9 +325,9 @@ extension InteractivMap : MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
 
-        if let cineAnnot = view.annotation as? PersonAnnotation {
+        if let pAnnot = view.annotation as? PersonAnnotation {
             
-            didSelectAnnotaionAction?(cineAnnot, true, true)
+            didSelectAnnotationAction?(pAnnot, true, true)
 
             
  
@@ -342,14 +339,14 @@ extension InteractivMap : MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
         
         if let annot = view.annotation {
-            didSelectAnnotaionAction?(annot, false, shouldSkipDeselect)
+            didSelectAnnotationAction?(annot, false, shouldSkipDeselect)
         }
         
         shouldSkipDeselect = false
         
         if (view.annotation as? PersonAnnotation) != nil {
             if selectedAnnotations.count == 0{
-                didDeselectAllAnnotaionAction?()
+                didDeselectAllAnnotationAction?()
             }
         }
     }
@@ -398,7 +395,7 @@ extension InteractivMap : MKMapViewDelegate {
         
         if let polyline = polyline {
             let gradientColors = [UIColor.omwBlue, UIColor.omwGreen]
-            let polylineRenderer = JLTGradientPathRenderer(polyline: polyline, colors: gradientColors)
+            let polylineRenderer = GradientPathRenderer(polyline: polyline, colors: gradientColors)
             polylineRenderer.lineWidth = 7
             return polylineRenderer
         }

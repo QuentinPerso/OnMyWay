@@ -2,7 +2,7 @@
  
  import MapKit
  
- class JLTGradientPathRenderer: MKOverlayPathRenderer {
+ class GradientPathRenderer: MKOverlayPathRenderer {
     
     var polyline : MKPolyline
     var colors:[UIColor]
@@ -16,7 +16,6 @@
         })
     }
     
-    //MARK: Initializers
     init(polyline: MKPolyline, colors: [UIColor]) {
         
         self.polyline = polyline
@@ -25,13 +24,9 @@
         super.init(overlay: polyline)
         
     }
-    
-    //MARK: Override methods
+
     override func draw(_ mapRect: MKMapRect, zoomScale: MKZoomScale, in context: CGContext) {
         
-        /*
-         Set path width relative to map zoom scale
-         */
         let baseWidth: CGFloat = self.lineWidth / zoomScale
         
         if self.border {
@@ -43,45 +38,26 @@
             context.strokePath()
         }
         
-        /*
-         Create a gradient from the colors provided with evenly spaced stops
-         */
         let colorspace = CGColorSpaceCreateDeviceRGB()
         let stopValues = calculateNumberOfStops()
         let locations: [CGFloat] = stopValues
         let gradient = CGGradient(colorsSpace: colorspace, colors: cgColors as CFArray, locations: locations)
-        
-        /*
-         Define path properties and add it to context
-         */
+
         context.setLineWidth(baseWidth)
         context.setLineJoin(CGLineJoin.round)
         context.setLineCap(CGLineCap.round)
         
         context.addPath(self.path)
-        
-        /*
-         Replace path with stroked version so we can clip
-         */
+
         context.saveGState();
         
         context.replacePathWithStrokedPath()
         context.clip();
-        
-        /*
-         Create bounding box around path and get top and bottom points
-         */
 
         let gradientStart:CGPoint = self.point(for: self.polyline.points()[0])
         let gradientEnd:CGPoint = self.point(for: self.polyline.points()[self.polyline.pointCount-1])
         
-//        let boundingBox = self.path.boundingBoxOfPath
-//        let gradientStart = boundingBox.origin
-//        let gradientEnd   = CGPoint(x:boundingBox.maxX, y:boundingBox.maxY)
         
-        /*
-         Draw the gradient in the clipped context of the path
-         */
         if let gradient = gradient {
             context.drawLinearGradient(gradient, start: gradientStart, end: gradientEnd, options: CGGradientDrawingOptions.drawsBeforeStartLocation);
         }

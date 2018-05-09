@@ -1,9 +1,9 @@
 //
-//  ArtWork.swift
-//  Busity
+//  PersonAnnotation.swift
+//  OnMyWay
 //
-//  Created by Quentin BEAUDOUIN on 04/06/2016.
-//  Copyright © 2016 Instama. All rights reserved.
+//  Created by Quentin Beaudouin on 04/05/2018.
+//  Copyright © 2018 Quentin Beaudouin. All rights reserved.
 //
 
 import UIKit

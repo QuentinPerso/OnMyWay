@@ -34,7 +34,7 @@
 		668F3E0E209D9294007DED77 /* GoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 668F3E0D209D9294007DED77 /* GoView.xib */; };
 		668F3E11209D94DA007DED77 /* VerticalButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 668F3E10209D94DA007DED77 /* VerticalButton.swift */; };
 		668F3E13209DA93A007DED77 /* OMWEmoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = 668F3E12209DA93A007DED77 /* OMWEmoji.swift */; };
-		668F3E15209DBAD9007DED77 /* JLTGradientPathRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 668F3E14209DBAD9007DED77 /* JLTGradientPathRenderer.swift */; };
+		668F3E15209DBAD9007DED77 /* GradientPathRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 668F3E14209DBAD9007DED77 /* GradientPathRenderer.swift */; };
 		668F3E17209DBCA6007DED77 /* luxembourg.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 668F3E16209DBCA6007DED77 /* luxembourg.gpx */; };
 		668F3E19209E439F007DED77 /* luxCar.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 668F3E18209E439F007DED77 /* luxCar.gpx */; };
 		668F3E1B209E5188007DED77 /* Image+Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = 668F3E1A209E5188007DED77 /* Image+Label.swift */; };
@@ -48,6 +48,7 @@
 		6694C0B620A03F110009C1EB /* Color+OMW.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6694C0B520A03F110009C1EB /* Color+OMW.swift */; };
 		6694C0B920A044BE0009C1EB /* LocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6694C0B820A044BE0009C1EB /* LocationView.swift */; };
 		6694C0BB20A2382C0009C1EB /* UserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6694C0BA20A2382C0009C1EB /* UserManager.swift */; };
+		6694C0BD20A271180009C1EB /* FriendsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6694C0BC20A271180009C1EB /* FriendsManager.swift */; };
 		A2D8F36E06FBDA6734CCB769 /* Pods_OnMyWayUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 225CBB6CF9213B745581B5BB /* Pods_OnMyWayUITests.framework */; };
 /* End PBXBuildFile section */
 
@@ -105,7 +106,7 @@
 		668F3E0D209D9294007DED77 /* GoView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GoView.xib; sourceTree = "<group>"; };
 		668F3E10209D94DA007DED77 /* VerticalButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalButton.swift; sourceTree = "<group>"; };
 		668F3E12209DA93A007DED77 /* OMWEmoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OMWEmoji.swift; sourceTree = "<group>"; };
-		668F3E14209DBAD9007DED77 /* JLTGradientPathRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JLTGradientPathRenderer.swift; sourceTree = "<group>"; };
+		668F3E14209DBAD9007DED77 /* GradientPathRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientPathRenderer.swift; sourceTree = "<group>"; };
 		668F3E16209DBCA6007DED77 /* luxembourg.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = luxembourg.gpx; sourceTree = "<group>"; };
 		668F3E18209E439F007DED77 /* luxCar.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = luxCar.gpx; sourceTree = "<group>"; };
 		668F3E1A209E5188007DED77 /* Image+Label.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Image+Label.swift"; sourceTree = "<group>"; };
@@ -119,6 +120,7 @@
 		6694C0B520A03F110009C1EB /* Color+OMW.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+OMW.swift"; sourceTree = "<group>"; };
 		6694C0B820A044BE0009C1EB /* LocationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationView.swift; sourceTree = "<group>"; };
 		6694C0BA20A2382C0009C1EB /* UserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserManager.swift; sourceTree = "<group>"; };
+		6694C0BC20A271180009C1EB /* FriendsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsManager.swift; sourceTree = "<group>"; };
 		6B1C669FE1B4DCE05BCAA2C0 /* Pods-OnMyWayUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OnMyWayUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-OnMyWayUITests/Pods-OnMyWayUITests.release.xcconfig"; sourceTree = "<group>"; };
 		918D1E58ECC30DF87FD4D72A /* Pods-OnMyWay.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OnMyWay.release.xcconfig"; path = "Pods/Target Support Files/Pods-OnMyWay/Pods-OnMyWay.release.xcconfig"; sourceTree = "<group>"; };
 		D29100DD6A5FCDBE79401CBB /* Pods-OnMyWayUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OnMyWayUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OnMyWayUITests/Pods-OnMyWayUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -243,9 +245,10 @@
 		663C538C209A451000AE7CCC /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				6694C0BA20A2382C0009C1EB /* UserManager.swift */,
+				6694C0BC20A271180009C1EB /* FriendsManager.swift */,
 				663C538D209A452600AE7CCC /* LocationManager.swift */,
 				668F3E01209CF25A007DED77 /* HapticHelper.swift */,
-				6694C0BA20A2382C0009C1EB /* UserManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -302,7 +305,7 @@
 			children = (
 				663C5393209C30A200AE7CCC /* PersonAnnotation.swift */,
 				663C5392209C30A200AE7CCC /* PersonAnnotationView.swift */,
-				668F3E14209DBAD9007DED77 /* JLTGradientPathRenderer.swift */,
+				668F3E14209DBAD9007DED77 /* GradientPathRenderer.swift */,
 			);
 			path = MapViews;
 			sourceTree = "<group>";
@@ -637,11 +640,12 @@
 				6694C0B4209F898E0009C1EB /* Int+TimeString.swift in Sources */,
 				663C5395209C30A200AE7CCC /* PersonAnnotation.swift in Sources */,
 				6627FFDD209C992900AE0831 /* Array+Functions.swift in Sources */,
-				668F3E15209DBAD9007DED77 /* JLTGradientPathRenderer.swift in Sources */,
+				668F3E15209DBAD9007DED77 /* GradientPathRenderer.swift in Sources */,
 				6694C0B920A044BE0009C1EB /* LocationView.swift in Sources */,
 				663C5391209C2F9400AE7CCC /* MapView+Center.swift in Sources */,
 				668F3E02209CF25A007DED77 /* HapticHelper.swift in Sources */,
 				668F3E0A209D192D007DED77 /* GoView.swift in Sources */,
+				6694C0BD20A271180009C1EB /* FriendsManager.swift in Sources */,
 				663A22882098671C00AE28CB /* AppDelegate.swift in Sources */,
 				663C5389209A41D600AE7CCC /* EmojiCollectionView.swift in Sources */,
 				668F3E13209DA93A007DED77 /* OMWEmoji.swift in Sources */,

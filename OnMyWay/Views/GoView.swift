@@ -28,7 +28,7 @@ class GoView: UIView {
     
     private var isInHisWayMode = false
     
-    public var stateChangedAction:((_ hidden:Bool)->())?
+    var stateChangedAction:((_ hidden:Bool)->())?
     var routeSelectedAction:((MKRoute?, _ onMyWay:Bool)->())?
     var goButtonAction:((_ isGoing:Bool)->())?
     

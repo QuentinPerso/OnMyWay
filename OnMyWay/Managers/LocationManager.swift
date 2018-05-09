@@ -9,16 +9,6 @@
 import CoreLocation
 import MapKit
 
-typealias LMLocationUpdateClosure = ((_ coordinate:CLLocationCoordinate2D, _ error:String?)->())?
-
-
-//TODO:Change
-@objc
-protocol LocationManagerDelegate : class
-{
-    @objc optional func locationAlwaysGranted()
-    @objc optional func locationGranted(status:CLAuthorizationStatus)
-}
 
 class LocationManager: NSObject{
     
@@ -37,7 +27,7 @@ class LocationManager: NSObject{
         }
     }
     
-    fileprivate var locUpateClosure:LMLocationUpdateClosure
+    fileprivate var locUpateClosure:((_ coordinate:CLLocationCoordinate2D, _ error:String?)->())?
     fileprivate var headingUpateClosure:((_ heading:CLLocationDirection)->())?
     fileprivate var singleUpdate = false
     
