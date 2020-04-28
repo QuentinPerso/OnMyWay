@@ -190,8 +190,7 @@ extension MapVC {
                 }
                 
             }
-            
-            
+
         }
         mapView.didUpdateUserLocationAction = { [weak self] coordinate in
             

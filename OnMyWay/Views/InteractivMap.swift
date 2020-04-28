@@ -120,12 +120,15 @@ extension InteractivMap : UIGestureRecognizerDelegate {
             guard let annotsUser = pAnnot.user else { continue }
             annotUsers.append(annotsUser)
             if users.contains(annotsUser) {
+                
                 let user = users[users.index(of: annotsUser)!]
                 let newCoord = user.coordinates
                 UIView.animate(withDuration: 0.3) {
                     pAnnot.coordinate = newCoord!
                 }
+                
                 guard let annotView = view(for: pAnnot) as? PersonAnnotationView else { continue }
+                
                 if let userETA = user.omw?.estimatedArrival, let transportType = user.omw?.transportType {
                     annotView.createParticles(type: transportType, eta: userETA)
                     pAnnot.user.omw = user.omw

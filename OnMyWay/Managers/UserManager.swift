@@ -19,7 +19,6 @@ class UserManager {
         return Auth.auth().currentUser?.uid
     }
  //   public var user:OMWUser!
-    
     static let shared = UserManager()
     
     public func connect(name:String, completion:((_ success:Bool)->())?) {

@@ -35,7 +35,7 @@ class EmojiCollection: UICollectionView {
     
     public var didSelectEmoji:((_ emoji:OMWEmoji, _ emojiView:UIImageView)->())?
     
-    fileprivate let emojies:[OMWEmoji]!
+    fileprivate var emojies:[OMWEmoji]!
     fileprivate let spaceCellToEdge:CGFloat = 2
     fileprivate let spaceBetweenCells:CGFloat = 2
     
